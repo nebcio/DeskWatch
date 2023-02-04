@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -36,7 +37,17 @@ class MainFragment : Fragment() {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
         }
-
+        val modeSwitch: Switch = binding.modeSwitch
+        // listener for switch
+        modeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                layoutInflater.inflate(R.layout.main_fragment, null).keepScreenOn = true
+                //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            } else {
+                layoutInflater.inflate(R.layout.main_fragment, null).keepScreenOn = false
+                //getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            }
+        }
 
 //        view.findViewById<RadioGroup>(R.id.radioButtonTheme).setOnCheckedChangeListener { _, checkedId ->
 //            when(checkedId){

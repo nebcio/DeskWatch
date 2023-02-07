@@ -16,6 +16,7 @@ class TaskFragment : Fragment() {
     private val mainViewModel: MainViewModel by activityViewModels()
 
     private val itemId: Int by lazy { requireArguments().getInt("id") }
+    private var id_task: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,6 +37,7 @@ class TaskFragment : Fragment() {
 
         mainViewModel.getTask(itemId).observe(viewLifecycleOwner, this::displayItem)
 
+        id_task = itemId
         binding.titleEditText.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) { updateItem() }
         }
@@ -49,13 +51,13 @@ class TaskFragment : Fragment() {
         val name = binding.titleEditText.text.toString()
         val description = binding.detailsEditText.text.toString()
 
-        if (name.isNotEmpty() && itemId != -1){
-            val item = Task(itemId, name, description, false)
-            mainViewModel.updateTask(item)
+        if (name.isNotEmpty() && id_task != -1){
+            val item = Task(itemId, name + id, description, false)
+            mainViewModel.updateTask(item)        // czy to ok
         }
-        else if (name.isNotEmpty() && itemId == -1){
-            val id = if (mainViewModel.tasks.value?.lastIndex!! > 0) 0 else (mainViewModel.tasks.value?.lastIndex!! + 1)
-            val item = Task(id, name, description, false)
+        else if (name.isNotEmpty() && id_task == -1){
+            id_task = mainViewModel.id + 1
+            val item = Task(id_task, name + id_task, description, false)
             mainViewModel.addTask(item)
         }
         else{

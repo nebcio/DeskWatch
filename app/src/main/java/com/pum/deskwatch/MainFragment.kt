@@ -32,9 +32,7 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mainViewModel.getTaskList(requireContext())
-
-        val tasksAdapter = TasksListAdapter(TaskComparator(), false)
+        val tasksAdapter = TasksListAdapter(TaskComparator())
         binding.tasksRecyclerView.apply {
             adapter = tasksAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -57,17 +55,11 @@ class MainFragment : Fragment() {
         modeSwitch.setOnCheckedChangeListener { _, isChecked ->
             layoutInflater.inflate(R.layout.main_fragment, null).keepScreenOn = isChecked
         }
-//        if (isChecked) {
-//            layoutInflater.inflate(R.layout.main_fragment, null).keepScreenOn = true
-//            //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-//        } else {
-//            layoutInflater.inflate(R.layout.main_fragment, null).keepScreenOn = false
-//            //getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-//        }
 
         // button add task
         binding.addButton.setOnClickListener {
             // go to task fragment
+            mainViewModel.saveTaskList()
             findNavController().navigate(MainFragmentDirections.actionMainFragmentToTaskFragment2(-1)) // prepare id?
         }
     }
@@ -91,7 +83,7 @@ class MainFragment : Fragment() {
                 return false
             }
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                mainViewModel.deleteTask(adapter.getTaskAt(viewHolder.adapterPosition), requireContext())
+                mainViewModel.deleteTask(adapter.getTaskAt(viewHolder.adapterPosition))
             }
         }).attachToRecyclerView(binding.tasksRecyclerView)
     }

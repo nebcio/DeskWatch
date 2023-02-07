@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.pum.deskwatch.databinding.TaskItemBinding
 
-class TasksListAdapter (private val taskComparator: TaskComparator, private val flags: Boolean) :
+class TasksListAdapter (private val taskComparator: TaskComparator) :
     ListAdapter<Task, TasksListAdapter.TasksListHolder>(taskComparator) {
 
     class TasksListHolder(private val binding: TaskItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -17,12 +17,17 @@ class TasksListAdapter (private val taskComparator: TaskComparator, private val 
             binding.titleEditText.text = item.title
             binding.checkBox.isChecked = item.isDone
 
+            binding.checkBox.setOnClickListener {
+                item.isDone = binding.checkBox.isChecked
+            }
+
             binding.root.setOnClickListener {
                 val action: NavDirections = MainFragmentDirections.actionMainFragmentToTaskFragment2(item.id)
                 findNavController(binding.root).navigate(action)
             }
         }
     }
+
     fun getTaskAt(position: Int): Task{
         return getItem(position)
     }

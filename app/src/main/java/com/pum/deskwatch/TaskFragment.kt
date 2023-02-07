@@ -52,12 +52,12 @@ class TaskFragment : Fragment() {
         val description = binding.detailsEditText.text.toString()
 
         if (name.isNotEmpty() && id_task != -1){
-            val item = Task(itemId, name + id, description, false)
+            val item = Task(itemId, name, description, false)
             mainViewModel.updateTask(item)        // czy to ok
         }
         else if (name.isNotEmpty() && id_task == -1){
             id_task = mainViewModel.id + 1
-            val item = Task(id_task, name + id_task, description, false)
+            val item = Task(id_task, name, description, false)
             mainViewModel.addTask(item)
         }
         else{

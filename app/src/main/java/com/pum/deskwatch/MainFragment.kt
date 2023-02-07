@@ -4,29 +4,43 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.pum.deskwatch.databinding.MainFragmentBinding
 
 class MainFragment : Fragment() {
     private lateinit var binding: MainFragmentBinding
+    private val mainViewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val activity: AppCompatActivity = activity as AppCompatActivity
-
         binding = MainFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mainViewModel.getTaskList(requireContext())
+        val tasksAdapter = TasksListAdapter(TaskComparator(), false)
+        binding.tasksRecyclerView.apply {
+            adapter = tasksAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
+        observeTask(tasksAdapter)
+
+        swipeToDelete(tasksAdapter)
 
         val themeSwitch: Switch = binding.themeSwitch
         // listener for switch
@@ -49,20 +63,35 @@ class MainFragment : Fragment() {
             }
         }
 
-//        view.findViewById<RadioGroup>(R.id.radioButtonTheme).setOnCheckedChangeListener { _, checkedId ->
-//            when(checkedId){
-//                R.id.radioButtonLight -> {
-//                    themeTextView.text = getString(R.string.light_theme)
-//                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-//                }
-//                R.id.radioButtonDark -> {
-//                    themeTextView.text = getString(R.string.dark_theme)
-//                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-//                }
-//                R.id.radioButtonDefault -> {
-//                    themeTextView.text = getString(R.string.current_theme)
-//                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-//                }
-//            }
+        // button add task
+        binding.addButton.setOnClickListener {
+            // go to task fragment
+            findNavController().navigate(MainFragmentDirections.actionMainFragmentToTaskFragment())
+        }
+    }
+
+    private fun observeTask(taskAdapter: TasksListAdapter) {
+        mainViewModel.tasks.observe(viewLifecycleOwner) { response ->
+            taskAdapter.submitList(response)
+        }
+    }
+
+    private fun swipeToDelete(adapter: TasksListAdapter) {
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                mainViewModel.deleteTask(adapter.getTaskAt(viewHolder.adapterPosition))
+            }
+        }).attachToRecyclerView(binding.tasksRecyclerView)
     }
 }

@@ -8,7 +8,7 @@ private const val TASKS_LIST = "list"
 private const val TASKS_FILE = "tasks_file"
 
 
-fun saveTaskList(context: Context, list: List<Task>) {
+fun saveTasksList(context: Context, list: List<Task>) {
     val json = Gson().toJson(list)
 
     val sharedPreferences = context.getSharedPreferences(TASKS_FILE, Context.MODE_PRIVATE)

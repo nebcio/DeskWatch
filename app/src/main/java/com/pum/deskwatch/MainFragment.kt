@@ -33,6 +33,7 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         mainViewModel.getTaskList(requireContext())
+
         val tasksAdapter = TasksListAdapter(TaskComparator(), false)
         binding.tasksRecyclerView.apply {
             adapter = tasksAdapter
@@ -54,19 +55,20 @@ class MainFragment : Fragment() {
         val modeSwitch: Switch = binding.modeSwitch
         // listener for switch
         modeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                layoutInflater.inflate(R.layout.main_fragment, null).keepScreenOn = true
-                //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            } else {
-                layoutInflater.inflate(R.layout.main_fragment, null).keepScreenOn = false
-                //getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            }
+            layoutInflater.inflate(R.layout.main_fragment, null).keepScreenOn = isChecked
         }
+//        if (isChecked) {
+//            layoutInflater.inflate(R.layout.main_fragment, null).keepScreenOn = true
+//            //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+//        } else {
+//            layoutInflater.inflate(R.layout.main_fragment, null).keepScreenOn = false
+//            //getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+//        }
 
         // button add task
         binding.addButton.setOnClickListener {
             // go to task fragment
-            findNavController().navigate(MainFragmentDirections.actionMainFragmentToTaskFragment())
+            findNavController().navigate(MainFragmentDirections.actionMainFragmentToTaskFragment2(-1)) // prepare id?
         }
     }
 
@@ -88,9 +90,8 @@ class MainFragment : Fragment() {
             ): Boolean {
                 return false
             }
-
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                mainViewModel.deleteTask(adapter.getTaskAt(viewHolder.adapterPosition))
+                mainViewModel.deleteTask(adapter.getTaskAt(viewHolder.adapterPosition), requireContext())
             }
         }).attachToRecyclerView(binding.tasksRecyclerView)
     }

@@ -52,16 +52,14 @@ class TaskFragment : Fragment() {
         if (name.isNotEmpty() && itemId != -1){
             val item = Task(itemId, name, description, false)
             mainViewModel.updateTask(item)
-//            findNavController().navigate(TaskFragmentDirections.actionTaskFragmentToMainFragment())
         }
         else if (name.isNotEmpty() && itemId == -1){
             val id = if (mainViewModel.tasks.value?.lastIndex!! > 0) 0 else (mainViewModel.tasks.value?.lastIndex!! + 1)
             val item = Task(id, name, description, false)
             mainViewModel.addTask(item)
-//            findNavController().navigate(TaskFragmentDirections.actionTaskFragmentToMainFragment())
         }
         else{
-//            binding.titleEditText.error = "Podaj tytuł"
+            binding.titleEditText.error = "Podaj tytuł"
         }
     }
 }

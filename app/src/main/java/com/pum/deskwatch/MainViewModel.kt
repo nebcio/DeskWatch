@@ -16,19 +16,26 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         tasksList.postValue(getTasksList(context))
     }
 
-    fun updateTask(item: Task){
-        tasksList.postValue(tasksList.value?.map { if (it.id == item.id) item else it })
-    }
-
     fun getTask(id: Int): LiveData<Task>{
         return tasksList.value?.find { it.id == id }?.let { MutableLiveData(it) } ?: MutableLiveData()
     }
 
-    fun addTask(item: Task){
-        tasksList.postValue(tasksList.value?.plus(item))
+    fun saveTaskList(context: Context) {
+        saveTasksList(context, tasksList.value ?: emptyList())
     }
 
-    fun deleteTask(item: Task){
+    fun updateTask(item: Task, context: Context){
+        tasksList.postValue(tasksList.value?.map { if (it.id == item.id) item else it })
+        saveTasksList(context, tasksList.value ?: emptyList())
+    }
+
+    fun addTask(item: Task, context: Context){
+        tasksList.postValue(tasksList.value?.plus(item))
+        saveTasksList(context, tasksList.value ?: emptyList())
+    }
+
+    fun deleteTask(item: Task, context: Context){
         tasksList.postValue(tasksList.value?.minus(item))
+        saveTasksList(context, tasksList.value ?: emptyList())
     }
 }

@@ -18,13 +18,12 @@ class TasksListAdapter (private val taskComparator: TaskComparator, private val 
             binding.checkBox.isChecked = item.isDone
 
             binding.root.setOnClickListener {
-                val action: NavDirections = MainFragmentDirections
-                    .actionMainFragmentToTaskFragment(item.id)
+                val action: NavDirections = MainFragmentDirections.actionMainFragmentToTaskFragment2(item.id)
                 findNavController(binding.root).navigate(action)
             }
         }
     }
-    public fun getTaskAt(position: Int): Task{
+    fun getTaskAt(position: Int): Task{
         return getItem(position)
     }
 
@@ -38,9 +37,8 @@ class TasksListAdapter (private val taskComparator: TaskComparator, private val 
         holder.bind(getItem(position))
 
         holder.itemView.setOnClickListener {
-            val action = MainFragmentDirections.actionMainFragmentToTaskFragment(getItem(position).id)
+            val action = MainFragmentDirections.actionMainFragmentToTaskFragment2(getItem(position).id)
             holder.itemView.findNavController().navigate(action)
         }
-
     }
 }
